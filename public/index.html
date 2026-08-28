@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#7c5cff">
+  <title>SKYLIGHT — Business OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+
+  <section id="auth" class="auth-screen">
+    <div class="auth-visual">
+      <div class="brand">
+        <span class="brand-star">✦</span>
+        <span>SKYLIGHT</span>
+      </div>
+
+      <div class="auth-copy">
+        <div class="eyebrow">THE BUSINESS OS FOR MODERN TEAMS</div>
+        <h1>Make your work<br><span>feel inevitable.</span></h1>
+        <p>
+          A focused command center for clients, projects, invoices, revenue and growth —
+          without the usual dashboard noise.
+        </p>
+
+        <div class="signal-row">
+          <div class="signal-card">
+            <strong>01</strong>
+            <span>Clients</span>
+          </div>
+          <div class="signal-card">
+            <strong>02</strong>
+            <span>Projects</span>
+          </div>
+          <div class="signal-card">
+            <strong>03</strong>
+            <span>Cashflow</span>
+          </div>
+        </div>
+
+        <button id="demo" class="demo-launch">
+          <span>Explore 10-minute demo</span>
+          <b>↗</b>
+        </button>
+      </div>
+
+      <div class="mini-dashboard">
+        <div class="mini-top">
+          <span>LIVE WORKSPACE</span>
+          <i></i>
+        </div>
+        <div class="mini-number">₹1,84,500</div>
+        <div class="mini-meta">
+          <span>Revenue this month</span>
+          <strong>+18.4%</strong>
+        </div>
+        <div class="mini-bars">
+          <i style="height:32%"></i>
+          <i style="height:52%"></i>
+          <i style="height:43%"></i>
+          <i style="height:71%"></i>
+          <i style="height:61%"></i>
+          <i style="height:86%"></i>
+          <i style="height:100%"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="auth-side">
+      <div class="auth-card">
+        <div class="auth-card-head">
+          <div class="app-icon">✦</div>
+          <div>
+            <small>WELCOME BACK</small>
+            <strong>Enter your workspace</strong>
+          </div>
+        </div>
+
+        <div class="auth-tabs">
+          <button class="on" data-mode="login">Sign in</button>
+          <button data-mode="register">Create account</button>
+        </div>
+
+        <form id="authform">
+          <label id="namel" class="hide">
+            Full name
+            <input id="name" type="text" placeholder="Your name" autocomplete="name">
+          </label>
+
+          <label>
+            Email address
+            <input id="email" type="email" placeholder="you@company.com" autocomplete="email" required>
+          </label>
+
+          <label>
+            Password
+            <input id="pass" type="password" placeholder="Minimum 6 characters" minlength="6" autocomplete="current-password" required>
+          </label>
+
+          <button class="primary wide" type="submit">
+            <span>Enter workspace</span>
+            <b>→</b>
+          </button>
+        </form>
+
+        <div class="auth-divider"><span>OR CONTINUE WITH</span></div>
+        <div class="social-login-grid">
+          <button type="button" class="social-btn" data-social-login="google">
+            <span class="social-icon google-icon">G</span>
+            <span>Continue with Google</span>
+          </button>
+          <button type="button" class="social-btn" data-social-login="microsoft">
+            <span class="social-icon microsoft-icon">⊞</span>
+            <span>Continue with Microsoft</span>
+          </button>
+        </div>
+        <div class="auth-note">
+          <span>●</span>
+          Your workspace data stays separated by account.
+        </div>
+      </div>
+
+      <div class="auth-foot">
+        <span>SKYLIGHT SaaS</span>
+        <span>Secure workspace · v5</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="app" class="app-shell hide">
+    <aside id="side" class="sidebar">
+      <div class="side-brand">
+        <div class="brand">
+          <span class="brand-star">✦</span>
+          <span>SKYLIGHT</span>
+        </div>
+        <button type="button" id="menu" class="mobile-menu">☰</button>
+      </div>
+
+      <div class="workspace-switcher">
+        <div class="workspace-logo">S</div>
+        <div>
+          <strong>Skylight HQ</strong>
+          <small>Business workspace</small>
+        </div>
+        <span class="status-dot"></span>
+      </div>
+
+      <div class="side-label">COMMAND CENTER</div>
+      <nav>
+        <button type="button" class="nav on" data-page="overview">
+          <span>⌂</span>
+          <b>Overview</b>
+        </button>
+        <button type="button" class="nav" data-page="analytics">
+          <span>◈</span>
+          <b>Analytics</b>
+        </button>
+        <button type="button" class="nav" data-page="clients">
+          <span>♙</span>
+          <b>Clients</b>
+          <i id="cc">0</i>
+        </button>
+        <button type="button" class="nav" data-page="projects">
+          <span>▣</span>
+          <b>Projects</b>
+        </button>
+        <button type="button" class="nav" data-page="invoices">
+          <span>▤</span>
+          <b>Invoices</b>
+        </button>
+      </nav>
+
+      <div class="side-label">WORKSPACE</div>
+      <nav>
+        <button type="button" class="nav" data-page="ai">
+          <span>✦</span>
+          <b>AI Assistant</b>
+          <em>NEW</em>
+        </button>
+        <button type="button" class="nav" data-page="chat">
+          <span>◌</span>
+          <b>Team Chat</b>
+        </button>
+        <button type="button" class="nav" data-page="notifications">
+          <span>♢</span>
+          <b>Activity</b>
+        </button>
+        <button type="button" class="nav" data-page="account">
+          <span>◎</span>
+          <b>My Account</b>
+        </button>
+        <button type="button" class="nav" data-page="settings">
+          <span>⚙</span>
+          <b>Settings</b>
+        </button>
+      </nav>
+
+      <div class="side-bottom">
+        <button type="button" class="upgrade" data-page="pricing">
+          <span class="upgrade-icon">↗</span>
+          <span>
+            <strong>Upgrade workspace</strong>
+            <small>Unlock the full system</small>
+          </span>
+        </button>
+        <button type="button" id="colors" class="utility-button">
+          <span>◉</span>
+          <b>Accent colour</b>
+          <i></i>
+        </button>
+        <button type="button" id="logout" class="utility-button signout">
+          <span>↪</span>
+          <b>Sign out</b>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="top-title">
+          <small>WORKSPACE / COMMAND</small>
+          <strong id="title">Overview</strong>
+        </div>
+
+        <div class="top-right">
+          <span id="demoTimer" class="pill demo-timer hide">10:00 demo</span>
+          <button id="theme" class="top-icon" title="Toggle light/dark mode">◐</button>
+          <button class="user-menu" data-page="account">
+            <span class="user-avatar">S</span>
+            <span>
+              <strong id="uname">Demo User</strong>
+              <small>Workspace owner</small>
+            </span>
+            <b>⌄</b>
+          </button>
+        </div>
+      </header>
+
+      <div id="content" class="content"></div>
+    </main>
+  </section>
+
+  <div id="modal" class="modal hide">
+    <div class="back"></div>
+    <div class="modalbox card">
+      <button id="close" class="modal-close">×</button>
+      <div id="modalbody"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast-container"></div>
+
+  <script src="/app.js"></script>
+<script src="../server.js"></script>
+</body>
+</html>

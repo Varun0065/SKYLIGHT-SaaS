@@ -1,0 +1,50 @@
+-- SKYLIGHT SaaS PostgreSQL schema
+-- The Node/Express backend also creates these tables automatically at startup.
+
+CREATE TABLE IF NOT EXISTS users (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL DEFAULT '',
+  provider TEXT NOT NULL DEFAULT 'local',
+  provider_id TEXT,
+  plan TEXT NOT NULL DEFAULT 'Starter',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_provider
+  ON users(provider, provider_id) WHERE provider_id IS NOT NULL;
+
+CREATE TABLE IF NOT EXISTS clients (
+  id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name TEXT NOT NULL, email TEXT DEFAULT '', company TEXT DEFAULT '',
+  value NUMERIC NOT NULL DEFAULT 0, status TEXT NOT NULL DEFAULT 'Active',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS projects (
+  id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name TEXT NOT NULL, client TEXT DEFAULT 'Internal', budget NUMERIC NOT NULL DEFAULT 0,
+  progress NUMERIC NOT NULL DEFAULT 0, status TEXT NOT NULL DEFAULT 'Active',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS invoices (
+  id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  number TEXT NOT NULL, client TEXT NOT NULL, amount NUMERIC NOT NULL DEFAULT 0,
+  due TEXT DEFAULT '', status TEXT NOT NULL DEFAULT 'Pending',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS activities (
+  id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  text TEXT NOT NULL, type TEXT DEFAULT 'activity',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS payment_requests (
+  id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  plan TEXT NOT NULL, amount NUMERIC NOT NULL, currency TEXT NOT NULL DEFAULT 'INR',
+  status TEXT NOT NULL DEFAULT 'Pending', payment_link TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), verified_at TIMESTAMPTZ
+);
