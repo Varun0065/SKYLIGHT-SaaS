@@ -141,5 +141,23 @@ $('#colors').onclick=()=>colorPicker();$('#menu').onclick=()=>$('#side').classLi
     build();
   }
 })();
+const menuBtn = document.getElementById("menu");
+const sidebar = document.getElementById("side");
+
+if (menuBtn && sidebar) {
+  menuBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("mobile-open");
+  });
+}
+
+if (sidebar) {
+  sidebar.querySelectorAll(".nav, .upgrade, .utility-button").forEach((el) => {
+    el.addEventListener("click", () => {
+      if (window.innerWidth <= 1100) {
+        sidebar.classList.remove("mobile-open");
+      }
+    });
+  });
+}
 
 
