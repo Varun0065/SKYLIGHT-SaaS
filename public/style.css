@@ -897,3 +897,44 @@ td b { color:var(--text); }
     min-height: 64px;
   }
 }
+/* MOBILE MENU BUTTON */
+.mobile-menu-top {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  border-radius: 10px;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .mobile-menu-top {
+    display: inline-flex !important;
+  }
+
+  .topbar {
+    gap: 10px;
+  }
+}
+.mobile-menu-top {
+  position: relative !important;
+  z-index: 99999 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    position: sticky !important;
+    z-index: 99990 !important;
+  }
+
+  .mobile-menu-top {
+    display: inline-flex !important;
+  }
+}
