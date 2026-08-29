@@ -55,7 +55,18 @@ $('#authform').onsubmit=async e=>{e.preventDefault();let body={email:$('#email')
 $('#demo').onclick=()=>{S.demo=true;S.demoEndsAt=Date.now()+10*60*1000;S.user={name:'Demo User',email:'demo@skylight.local',plan:'Starter'};S.data=demoData();localStorage.setItem('skylight_demo_started',String(S.demoEndsAt));showApp();updateDemoTimer();toast('10-minute demo started')};
 document.addEventListener('click',async e=>{let nav=e.target.closest('[data-page]');if(nav){e.preventDefault();e.stopPropagation();render(nav.dataset.page);if(innerWidth<700)$('#side').classList.remove('open');return}let plan=e.target.closest('[data-plan]');if(plan){payment(plan.dataset.plan,+plan.dataset.price);return}let done=e.target.closest('#paymentdone');if(done){await activatePlan(done.dataset.plan, +done.closest('.payment').querySelector('.pay-amount').textContent.replace(/[^0-9]/g,''));return}let copy=e.target.closest('[data-copy]');if(copy){navigator.clipboard?.writeText(copy.dataset.copy);toast('Copied');return}let modal=e.target.closest('[data-modal]');if(modal){openModal(modal.dataset.modal);return}let pay=e.target.closest('[data-pay]');if(pay){if(S.demo){toast('Demo invoice marked paid');return}try{await api('/api/invoices/'+pay.dataset.pay+'/pay',{method:'PATCH'});await loadData();toast('Invoice marked paid')}catch(err){toast(err.message)}return}let close=e.target.closest('#close,.back');if(close){$('#modal').classList.add('hide');return}let col=e.target.closest('[data-color]');if(col){applyColor(col.dataset.color);return}});
 $('#colors').onclick=()=>colorPicker();$('#menu').onclick=()=>$('#side').classList.toggle('open');$('#theme').onclick=()=>{document.body.classList.toggle('light');localStorage.setItem('skylight_theme',document.body.classList.contains('light')?'light':'dark')};$('#logout').onclick=async(e)=>{e.preventDefault();try{await fetch('/api/auth/logout',{method:'POST',credentials:'same-origin'})}catch(_){}localStorage.removeItem('skylight_demo_started');localStorage.removeItem('skylight_pending_plan');S.token=null;S.user=null;S.data=null;S.demo=false;$('#side')?.classList.remove('open');location.reload()};document.addEventListener('click',async e=>{if(e.target.id==='aisend'){let i=$('#aiinput'),v=i.value.trim();if(!v)return;$('#messages').innerHTML+=`<div class="msg me">${v.replace(/[<>&]/g,m=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[m]))}</div><div class="msg">Demo AI: I’d turn that into a clear action plan with measurable next steps.</div>`;i.value=''}});
-(async()=>{let savedDemo=Number(localStorage.getItem('skylight_demo_started')||0);if(!S.token&&savedDemo>Date.now()){S.demo=true;S.demoEndsAt=savedDemo;S.user={name:'Demo User',email:'demo@skylight.local',plan:'Starter'};S.data=demoData()}let c=localStorage.getItem('skylight_color');if(c)applyColor(c);if(localStorage.getItem('skylight_theme')==='light')document.body.classList.add('light');try{S.user=await api('/api/me');S.data=await api('/api/dashboard');showApp()}catch(e){/* not logged in */}})();
+(async () => {
+  let c = localStorage.getItem('skylight_color');
+  if (c) applyColor(c);
+
+  if (localStorage.getItem('skylight_theme') === 'light') {
+    document.body.classList.add('light');
+  }
+
+  // Always show login/signup when the website opens.
+  $('#auth').classList.remove('hide');
+  $('#app').classList.add('hide');
+})();
 
 
 /* SKYLIGHT Theme Studio */
@@ -141,22 +152,6 @@ $('#colors').onclick=()=>colorPicker();$('#menu').onclick=()=>$('#side').classLi
     build();
   }
 })();
-if (menuBtn && sidebar) {
-  menuBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("mobile-open");
-  });
-}
-
-if (sidebar) {
-  sidebar.querySelectorAll(".nav, .upgrade, .utility-button").forEach((el) => {
-    el.addEventListener("click", () => {
-      if (window.innerWidth <= 1100) {
-        sidebar.classList.remove("mobile-open");
-        sidebar.classList.remove("open");
-      }
-    });
-  });
-}
 
 
 
