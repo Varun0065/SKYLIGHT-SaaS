@@ -57,24 +57,26 @@ function clearCookie(res,name){
     `${name}=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax${COOKIE_SECURE?'; Secure':''}`
   )
 }
-const oauthStates = new Map();
-
 function createOAuthState() {
-  const state = crypto.randomBytes(32).toString('hex');
-  oauthStates.set(state, Date.now() + 10 * 60 * 1000);
-  return state;
+  return jwt.sign(
+    {
+      purpose: 'oauth_state',
+      nonce: crypto.randomBytes(32).toString('hex')
+    },
+    SECRET,
+    { expiresIn: '10m' }
+  );
 }
 
 function consumeOAuthState(state) {
-  const expiresAt = oauthStates.get(state);
+  try {
+    const payload = jwt.verify(state, SECRET);
 
-  if (!expiresAt) return false;
-
-  oauthStates.delete(state);
-
-  return expiresAt > Date.now();
+    return payload && payload.purpose === 'oauth_state';
+  } catch (_) {
+    return false;
+  }
 }
-
 const rateBuckets = new Map();
 function rateLimit(max, windowMs){
   return (req,res,next)=>{
