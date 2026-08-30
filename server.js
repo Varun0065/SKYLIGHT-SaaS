@@ -9,6 +9,10 @@ const { Pool } = require('pg');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const OAUTH_REDIRECT_URI =
+  process.env.NODE_ENV === 'production'
+    ? 'https://skylight-saas-8.onrender.com/auth/google/callback'
+    : 'http://localhost:3000/auth/google/callback';
 const SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === 'production' ? null : 'skylight-development-only-secret-change-me');
 if (process.env.NODE_ENV === 'production' && (!SECRET || SECRET.length < 32)) {
   throw new Error('JWT_SECRET must be set to a strong 32+ character secret in production');
@@ -232,7 +236,7 @@ app.get('/api/auth/google', oauthRateLimit, (req,res)=>{
   if(!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.GOOGLE_REDIRECT_URI) return res.status(503).json({error:'Google sign-in is not configured. Add GOOGLE_CLIENT_ID and GOOGLE_REDIRECT_URI in Render Environment.'});
   const state=crypto.randomBytes(32).toString('hex');
   setOAuthState(res,state);
-  const params=new URLSearchParams({client_id:process.env.GOOGLE_CLIENT_ID,redirect_uri:process.env.GOOGLE_REDIRECT_URI,response_type:'code',scope:'openid email profile',access_type:'offline',prompt:'select_account',state});
+  const params=new URLSearchParams({client_id:process.env.GOOGLE_CLIENT_ID,redirect_uri:OAUTH_REDIRECT_URI,response_type:'code',scope:'openid email profile',access_type:'offline',prompt:'select_account',state});
   res.json({url:'https://accounts.google.com/o/oauth2/v2/auth?'+params.toString()});
 });
 
