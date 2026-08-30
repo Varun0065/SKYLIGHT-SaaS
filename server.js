@@ -50,7 +50,12 @@ function validOAuthState(expected, actual){
   if (!expected || !actual || expected.length !== actual.length) return false;
   return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(actual));
 }
-function setOAuthState(res,state){appendCookie(res, `skylight_oauth_state=${encodeURIComponent(state)}; Max-Age=600; Path=/; HttpOnly; SameSite=Lax${COOKIE_SECURE?'; Secure':''}`)}
+function setOAuthState(res, state) {
+  appendCookie(
+    res,
+    `skylight_oauth_state=${encodeURIComponent(state)}; Max-Age=600; Path=/; HttpOnly; SameSite=None; Secure`
+  );
+}
 
 const rateBuckets = new Map();
 function rateLimit(max, windowMs){
@@ -314,7 +319,7 @@ app.get('/auth/google/callback', async (req, res) => {
         code,
         client_id:process.env.GOOGLE_CLIENT_ID,
         client_secret:process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri:process.env.GOOGLE_REDIRECT_URI,
+        redirect_uri:OAUTH_REDIRECT_URI,
         grant_type:'authorization_code'
       })
     });
