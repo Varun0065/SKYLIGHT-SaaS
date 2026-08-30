@@ -49,12 +49,30 @@ function clearCookie(res,name){appendCookie(res, `${name}=; Max-Age=0; Path=/; H
 function validOAuthState(expected, actual){
   if (!expected || !actual || expected.length !== actual.length) return false;
   return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(actual));
+
 }
-function setOAuthState(res, state) {
+function clearCookie(res,name){
   appendCookie(
     res,
-    `skylight_oauth_state=${encodeURIComponent(state)}; Max-Age=600; Path=/; HttpOnly; SameSite=None; Secure`
-  );
+    `${name}=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax${COOKIE_SECURE?'; Secure':''}`
+  )
+}
+const oauthStates = new Map();
+
+function createOAuthState() {
+  const state = crypto.randomBytes(32).toString('hex');
+  oauthStates.set(state, Date.now() + 10 * 60 * 1000);
+  return state;
+}
+
+function consumeOAuthState(state) {
+  const expiresAt = oauthStates.get(state);
+
+  if (!expiresAt) return false;
+
+  oauthStates.delete(state);
+
+  return expiresAt > Date.now();
 }
 
 const rateBuckets = new Map();
@@ -239,8 +257,7 @@ app.post('/api/auth/login', authRateLimit, async (req, res) => {
 
 app.get('/api/auth/google', oauthRateLimit, (req,res)=>{
   if(!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.GOOGLE_REDIRECT_URI) return res.status(503).json({error:'Google sign-in is not configured. Add GOOGLE_CLIENT_ID and GOOGLE_REDIRECT_URI in Render Environment.'});
-  const state=crypto.randomBytes(32).toString('hex');
-  setOAuthState(res,state);
+  const state = createOAuthState();
   const params=new URLSearchParams({client_id:process.env.GOOGLE_CLIENT_ID,redirect_uri:OAUTH_REDIRECT_URI,response_type:'code',scope:'openid email profile',access_type:'offline',prompt:'select_account',state});
   res.json({url:'https://accounts.google.com/o/oauth2/v2/auth?'+params.toString()});
 });
@@ -303,9 +320,11 @@ async function oauthLoginOrCreate({ provider, providerId, email, name }) {
 app.get('/auth/google/callback', async (req, res) => {
   try {
     if (req.query.error) return res.status(400).send('Google sign-in cancelled or denied.');
-    const cookies=parseCookies(req);
-    if (!req.query.state || !cookies.skylight_oauth_state || !validOAuthState(String(cookies.skylight_oauth_state), String(req.query.state))) return res.status(400).send('Invalid OAuth state. Please try again.');
-    clearCookie(res,'skylight_oauth_state');
+    const state = String(req.query.state || '');
+
+if (!consumeOAuthState(state)) {
+  return res.status(400).send('Invalid or expired OAuth state. Please try again.');
+}
     const code = String(req.query.code || '');
     if (!code) return res.status(400).send('Missing Google authorization code.');
     if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.GOOGLE_REDIRECT_URI) {
